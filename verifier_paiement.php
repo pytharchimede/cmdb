@@ -6,14 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vérification de Transaction BNB</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/progressbar.js/1.1.0/progressbar.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        .countdown {
-            font-size: 4rem;
-            font-weight: bold;
+        .countdown-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
             margin-top: 20px;
+        }
+
+        .countdown {
+            font-size: 3rem;
+            font-weight: bold;
+            position: absolute;
+        }
+
+        .progress-circle {
+            width: 150px;
+            height: 150px;
+            position: relative;
         }
 
         .details {
@@ -45,7 +60,10 @@
                 <div class="card-body">
                     <h5 class="card-title text-center" id="status"></h5>
                     <hr>
-                    <div class="countdown" id="countdown"></div>
+                    <div class="countdown-container">
+                        <div class="progress-circle" id="progress-container"></div>
+                        <div class="countdown" id="countdown"></div>
+                    </div>
                     <div class="details">
                         <p><strong><i class="fas fa-coins"></i> Montant :</strong> <span id="montant"></span></p>
                         <p><strong><i class="fas fa-dollar-sign"></i> Valeur en USD :</strong> <span id="montant_usd"></span></p>
@@ -99,12 +117,51 @@
         function startCountdown() {
             let seconds = 60;
             $("#countdown").text(seconds);
+            let progressBar = new ProgressBar.Circle("#progress-container", {
+                strokeWidth: 6,
+                easing: 'linear',
+                duration: 60000,
+                color: '#28a745',
+                trailColor: '#ddd',
+                trailWidth: 6,
+                svgStyle: null
+            });
+            progressBar.animate(1);
+
             let interval = setInterval(() => {
                 seconds--;
                 $("#countdown").text(seconds);
                 if (seconds <= 0) {
                     clearInterval(interval);
                     $("#countdown").html('<i class="fas fa-check-circle text-success"></i> Crédit effectué !');
+                    setTimeout(() => {
+                        startRedirectCountdown();
+                    }, 1000);
+                }
+            }, 1000);
+        }
+
+        function startRedirectCountdown() {
+            let seconds = 5;
+            $("#status").html('<i class="fas fa-spinner fa-spin"></i> Redirection en cours...');
+            $("#countdown").text(seconds);
+            let progressBar = new ProgressBar.Circle("#progress-container", {
+                strokeWidth: 6,
+                easing: 'linear',
+                duration: 5000,
+                color: '#ffc107',
+                trailColor: '#ddd',
+                trailWidth: 6,
+                svgStyle: null
+            });
+            progressBar.animate(1);
+
+            let interval = setInterval(() => {
+                seconds--;
+                $("#countdown").text(seconds);
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    window.location.href = "https://votreurl.com/page_de_redirection";
                 }
             }, 1000);
         }
